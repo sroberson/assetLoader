@@ -40,30 +40,47 @@
         </section>
 
         <script>
+
+            function getQuerystring(key) {
+                var query = window.location.search.substring(1);
+                var vars = query.split("&");
+                for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split("=");
+                    if (pair[0] === key) {
+                        return pair[1];
+                    }
+                }
+            }
+
             function init() {
-                // Parse JSON string into object
-                var jsonData = dataJson;
+                // first, look in querystring
+                var qsPerson = getQuerystring("name");
+                var qsPhone = getQuerystring("phone");
+                var qsImage = getQuerystring("image");
+
+                // if that's empty, look for included json file.
+                var jsonData = dataJson; // <-- script tag in HEAD
                 var targetImage = document.getElementById("profilePic");
                 var nameField = document.getElementById("person");
                 var phoneField = document.getElementById("phone");
 
-                if (jsonData.length > 0 && jsonData[0]) {
-                    if (jsonData[0].person.length > 0) {
-                        nameField.value = jsonData[0].person;
-                    } else {
-                        nameField.value = "Default Name";
-                    }
-                    if (jsonData[0].phone.length > 0) {
-                        phoneField.value = jsonData[0].phone;
-                    } else {
-                        phoneField.value = "888-888-8888";
-                    }
-                    if (jsonData[0].profilePic.length > 0) {
-                        targetImage.src = jsonData[0].profilePic;
-                    } else {
-                        targetImage.src = "https://via.placeholder.com/150x150.png?text=Default";
-                    }
+
+                if (qsPerson || jsonData[0].person.length > 0) {
+                    nameField.value = qsPerson || jsonData[0].person;
+                } else {
+                    nameField.value = "Default Name";
                 }
+                if (qsPhone || jsonData[0].phone.length > 0) {
+                    phoneField.value = qsPhone || jsonData[0].phone;
+                } else {
+                    phoneField.value = "888-888-8888";
+                }
+                if (qsImage || jsonData[0].profilePic.length > 0) {
+                    targetImage.src = qsImage || jsonData[0].profilePic;
+                } else {
+                    targetImage.src = "https://via.placeholder.com/150x150.png?text=Default";
+                }
+
             }
 
             window.onload = function (event) {
