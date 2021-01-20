@@ -14,11 +14,21 @@
                 align-self: center;
             }
         </style>
+        <script type="text/javascript" src="data.js"></script>
+        <script>
+            console.log(window.dataJson);
+        </script>
     </head>
     <body>
         <section>
             <div class="image-wrapper">
-                <img width="150" height="150" id="profilePic" src="https://via.placeholder.com/150x150.png?text=Default" alt />
+                <img
+                    width="150"
+                    height="150"
+                    id="profilePic"
+                    src="https://via.placeholder.com/150x150.png?text=Default"
+                    alt
+                />
             </div>
             <div class="content">
                 <label for="person">Name</label>
@@ -30,48 +40,30 @@
         </section>
 
         <script>
-            var jsonFileName = "data.json";
-
-            function loadJSON(callback) {
-                var xobj = new XMLHttpRequest();
-                xobj.overrideMimeType("application/json");
-                xobj.open("GET", jsonFileName, true);
-                xobj.onreadystatechange = function () {
-                    if (xobj.readyState === 4 && xobj.status === 200) {
-                        // Required use of an anonymous callback
-                        // as .open() will NOT return a value but simply returns undefined in asynchronous mode
-                        callback(xobj.responseText);
-                    }
-                };
-                xobj.send(null);
-            }
-
             function init() {
-                loadJSON(function (response) {
-                    // Parse JSON string into object
-                    var jsonData = JSON.parse(response);
-                    var targetImage = document.getElementById("profilePic");
-                    var nameField = document.getElementById("person");
-                    var phoneField = document.getElementById("phone");
+                // Parse JSON string into object
+                var jsonData = dataJson;
+                var targetImage = document.getElementById("profilePic");
+                var nameField = document.getElementById("person");
+                var phoneField = document.getElementById("phone");
 
-                    if (jsonData.length > 0 && jsonData[0]) {
-                        if (jsonData[0].person.length > 0) {
-                            nameField.value = jsonData[0].person;
-                        } else {
-                            nameField.value = "Default Name";
-                        }
-                        if (jsonData[0].phone.length > 0) {
-                            phoneField.value = jsonData[0].phone;
-                        } else {
-                            phoneField.value = "888-888-8888";
-                        }
-                        if (jsonData[0].profilePic.length > 0) {
-                            targetImage.src = jsonData[0].profilePic;
-                        } else {
-                            targetImage.src = "https://via.placeholder.com/150x150.png?text=Default";
-                        }
+                if (jsonData.length > 0 && jsonData[0]) {
+                    if (jsonData[0].person.length > 0) {
+                        nameField.value = jsonData[0].person;
+                    } else {
+                        nameField.value = "Default Name";
                     }
-                });
+                    if (jsonData[0].phone.length > 0) {
+                        phoneField.value = jsonData[0].phone;
+                    } else {
+                        phoneField.value = "888-888-8888";
+                    }
+                    if (jsonData[0].profilePic.length > 0) {
+                        targetImage.src = jsonData[0].profilePic;
+                    } else {
+                        targetImage.src = "https://via.placeholder.com/150x150.png?text=Default";
+                    }
+                }
             }
 
             window.onload = function (event) {
@@ -80,6 +72,10 @@
                     init();
                 }, 1000); // one second
             };
+
+            // templating system ideas:
+            // https://jsfiddle.net/at2h6ob0/
+            // https://johnresig.com/blog/javascript-micro-templating/
         </script>
     </body>
 </html>
