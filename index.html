@@ -14,10 +14,6 @@
                 align-self: center;
             }
         </style>
-        <script type="text/javascript" src="data.js"></script>
-        <script>
-            console.log(window.dataJson);
-        </script>
     </head>
     <body>
         <section>
@@ -40,7 +36,6 @@
         </section>
 
         <script>
-
             function getQuerystring(key) {
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -52,6 +47,13 @@
                 }
             }
 
+            function addScript(src, callback) {
+                var s = document.createElement("script");
+                s.setAttribute("src", src);
+                s.onload = callback;
+                document.body.appendChild(s);
+            }
+
             function init() {
                 // first, look in querystring
                 var qsPerson = getQuerystring("name");
@@ -59,11 +61,22 @@
                 var qsImage = getQuerystring("image");
 
                 // if that's empty, look for included json file.
-                var jsonData = dataJson; // <-- script tag in HEAD
+                var jsonData;
+                try {
+                    jsonData = dataJson; // <-- script tag in HEAD
+                } catch (e) {
+                    // load up default values
+                    jsonData = [
+                        {
+                            person: "Default Name",
+                            phone: "888-888-8888",
+                            profilePic: "https://via.placeholder.com/150x150.png?text=Default",
+                        },
+                    ];
+                }
                 var targetImage = document.getElementById("profilePic");
                 var nameField = document.getElementById("person");
                 var phoneField = document.getElementById("phone");
-
 
                 if (qsPerson || jsonData[0].person.length > 0) {
                     nameField.value = qsPerson || jsonData[0].person;
@@ -80,10 +93,11 @@
                 } else {
                     targetImage.src = "https://via.placeholder.com/150x150.png?text=Default";
                 }
-
             }
 
             window.onload = function (event) {
+                addScript("data.js");
+
                 // artificial delay
                 setTimeout(function () {
                     init();
